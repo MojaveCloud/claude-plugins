@@ -1,42 +1,39 @@
 ---
 name: deploy
-description: Deploy the current repository to Mojave and iterate until it is live — push, deploy, read the build log on failure, fix, redeploy, and verify the URL. Use when the user asks to deploy, ship, host, publish or put an app online with Mojave, or to fix a failing Mojave deploy.
+description: Deploy the current GitHub repository to Mojave and iterate until it is live — push, deploy, read the build log on failure, fix, redeploy, and verify the URL. Use when the user asks to deploy, ship, host, publish or put an app online with Mojave, or to fix a failing Mojave deploy.
 ---
 
 # Deploy to Mojave
 
 Mojave builds from **GitHub**, not from local files. The deploy loop is: commit, push, deploy, check the result, fix, repeat.
 
-## 1. Check the tools
+## 1. Check the connection
 
-Call the `whoami` tool from the `mojave` MCP server.
+Call the `whoami` tool from the `mojave` MCP server. It reports the user and the one Mojave org this connection acts in.
 
-- **Works:** continue.
-- **"not logged in":** ask the user to run `mojave login` in their terminal. It opens a browser. Then retry.
-- **No `mojave` tools at all:** the CLI is missing or outdated. Run `command -v mojave` to find out which.
-  - Missing: ask the user before installing it with `curl -fsSL https://mojave.sh/install.sh | sh`.
-  - Present: run `mojave update`.
-  - Either way, finish with `mojave login`, then `/reload-plugins` or restart Claude Code.
+- **Works:** continue. If the org isn't the one the user means, they can reconnect and pick another (`/mcp` in Claude Code, or remove and re-add the connector).
+- **Needs authentication, or no `mojave` tools:** ask the user to run `/mcp`, choose `mojave`, and sign in. A browser opens on mojave.sh, where they approve the connection and pick an org. Then retry.
 
 ## 2. Make sure GitHub has the code
 
-The repo needs a GitHub `origin` remote. Commit the work and push the branch you are deploying. Only what is on GitHub gets built.
+Mojave builds what is on GitHub, and the Mojave server can't see this machine. Check before every deploy:
 
-- If the repo is not on GitHub yet, ask the user before creating a remote (for example `gh repo create`). It may be private.
-- A private repo needs the Mojave GitHub App installed. If deploy reports it cannot access the repo, send the user to https://mojave.sh/new to connect GitHub.
+- `git remote get-url origin` names a GitHub repository. That `owner/name` is what you deploy.
+- `git status --porcelain` is empty. Commit the work.
+- `git rev-list --count @{upstream}..HEAD` is `0`. Push the branch.
+
+If the repo isn't on GitHub yet, ask the user before creating a remote (for example `gh repo create`); it may be private. A private repo needs the Mojave GitHub App installed. If deploy reports it can't access the repo, send the user to https://mojave.sh/new to connect GitHub.
 
 ## 3. Deploy
 
-**First deploy:** call `deploy` with no arguments to use the current directory's GitHub remote. Pass `root` for a monorepo app in a subdirectory. Before deploying, check the shape of the app against the `platform` skill.
+**First deploy:** call `deploy` with `repo` set to the `owner/name` from step 2, and `branch` if it isn't the default branch. Pass `root` for a monorepo app in a subdirectory. Before deploying, check the shape of the app against the `platform` skill.
 
 **Later deploys of the default branch:** pushing triggers a deploy automatically. Don't call `deploy` again, which would build the same commit twice. Instead:
 1. Call `list_deployments` for the project.
-2. Find the deployment whose `commitSha` matches the commit you pushed. It may take a few seconds to appear.
-3. Call `get_deployment` on it with `wait_seconds: 600`.
+2. Find the deployment whose `commitSha` matches the commit you pushed (`git rev-parse HEAD`). It may take a few seconds to appear.
+3. Call `get_deployment` on it with `wait_seconds: 120`, and repeat while it is still building.
 
-Call `deploy` directly to deploy another branch or to redeploy without a new commit, for example after changing env vars.
-
-Read the `warnings` in the result. Uncommitted or unpushed local work means the deploy built something other than what you edited.
+Call `deploy` directly to deploy another branch, or to redeploy without a new commit (for example after changing env vars). It waits up to two minutes. If the result is still building, keep calling `get_deployment` with `wait_seconds`.
 
 ## 4. On failure: read, fix, push, retry
 
@@ -62,4 +59,4 @@ Report the live URL to the user.
 
 - `set_env_var` stores a value as a secret by default. Changes take effect on the **next** deploy, so redeploy after setting them.
 - `create_database` (Postgres → `DATABASE_URL`, Valkey → `KV_URL`) and `create_blob_bucket` (`BLOB_URL`, `BLOB_TOKEN`) inject credentials into the project's env. The app reads them from the environment, so never hard-code them. Redeploy afterwards. These resources bill while they exist, so confirm with the user before creating one.
-- Deleting projects, databases and buckets is deliberately not available to you. Point the user to the dashboard or `mojave databases rm` if they ask.
+- Deleting projects, databases and buckets is deliberately not available to you. Point the user to the Mojave dashboard if they ask.

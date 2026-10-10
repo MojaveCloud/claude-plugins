@@ -10,7 +10,7 @@
     {
       "name": "mojave",
       "source": "./plugins/mojave",
-      "description": "Deploy to Mojave from Claude Code: ship a repo to a live URL, read build and runtime logs, manage env vars, roll back, and provision databases.",
+      "description": "Deploy to Mojave from Claude: ship a GitHub repo to a live URL, read build and runtime logs, manage env vars, roll back, and provision databases. Signs in through your browser; no CLI needed.",
       "category": "deployment",
       "tags": [
         "deploy",
