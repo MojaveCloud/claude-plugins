@@ -9,6 +9,7 @@
     "url": "https://mojave.sh"
   },
   "homepage": "https://mojave.sh/docs/cli",
+  "license": "MIT",
   "keywords": [
     "deploy",
     "hosting",
