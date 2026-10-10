@@ -1,0 +1,24 @@
+{
+  "name": "mojave",
+  "owner": {
+    "name": "Mojave",
+    "email": "brandon@mojave.sh",
+    "url": "https://mojave.sh"
+  },
+  "description": "Deploy GitHub repos to live URLs and run managed Postgres, Valkey and blob storage from Claude.",
+  "plugins": [
+    {
+      "name": "mojave",
+      "source": "./plugins/mojave",
+      "description": "Deploy to Mojave from Claude Code: ship a repo to a live URL, read build and runtime logs, manage env vars, roll back, and provision databases.",
+      "category": "deployment",
+      "tags": [
+        "deploy",
+        "hosting",
+        "postgres",
+        "redis",
+        "mcp"
+      ]
+    }
+  ]
+}

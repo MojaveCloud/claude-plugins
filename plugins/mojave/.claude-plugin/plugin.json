@@ -1,0 +1,20 @@
+{
+  "name": "mojave",
+  "displayName": "Mojave",
+  "version": "0.1.0",
+  "description": "Deploy to Mojave from Claude Code: ship a repo to a live URL, read build and runtime logs, manage env vars, roll back, and provision databases.",
+  "author": {
+    "name": "Mojave",
+    "email": "brandon@mojave.sh",
+    "url": "https://mojave.sh"
+  },
+  "homepage": "https://mojave.sh/docs/cli",
+  "keywords": [
+    "deploy",
+    "hosting",
+    "serverless",
+    "postgres",
+    "valkey",
+    "mcp"
+  ]
+}
