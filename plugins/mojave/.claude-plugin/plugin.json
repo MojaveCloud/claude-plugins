@@ -1,14 +1,20 @@
 {
   "name": "mojave",
   "displayName": "Mojave",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Deploy to Mojave from Claude: ship a GitHub repo to a live URL, read build and runtime logs, manage env vars, roll back, and provision databases. Signs in through your browser; no CLI needed.",
   "author": {
     "name": "Mojave",
     "email": "brandon@mojave.sh",
     "url": "https://mojave.sh"
   },
-  "homepage": "https://mojave.sh/docs/cli",
+  "homepage": "https://mojave.sh",
+  "repository": "https://github.com/MojaveCloud/claude-plugins",
+  "icon": "./.claude-plugin/icon.svg",
+  "documentationUrl": "https://mojave.sh/docs/cli#ai-agents-mcp",
+  "supportUrl": "mailto:brandon@mojave.sh",
+  "privacyPolicyUrl": "https://mojave.sh/docs/privacy",
+  "termsOfServiceUrl": "https://mojave.sh/docs/terms",
   "license": "MIT",
   "keywords": [
     "deploy",
