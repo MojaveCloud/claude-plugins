@@ -1,7 +1,7 @@
 {
   "name": "mojave",
   "displayName": "Mojave",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Deploy to Mojave from Claude: ship a GitHub repo to a live URL, read build and runtime logs, manage env vars, roll back, and provision databases. Signs in through your browser; no CLI needed.",
   "author": {
     "name": "Mojave",

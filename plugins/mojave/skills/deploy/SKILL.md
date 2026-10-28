@@ -59,4 +59,13 @@ Report the live URL to the user.
 
 - `set_env_var` stores a value as a secret by default. Changes take effect on the **next** deploy, so redeploy after setting them.
 - `create_database` (Postgres → `DATABASE_URL`, Valkey → `KV_URL`) and `create_blob_bucket` (`BLOB_URL`, `BLOB_TOKEN`) inject credentials into the project's env. The app reads them from the environment, so never hard-code them. Redeploy afterwards. These resources bill while they exist, so confirm with the user before creating one.
+- `resize_database` changes a database's or KV store's vCPUs/memory or grows its volume. It **restarts** the instance (a brief outage) and volumes never shrink, so confirm with the user first. `list_backups` shows its backups.
+
+## Domains, cost and traffic
+
+- `add_domain` attaches a hostname and returns the DNS records the user must create at their DNS provider. Once they have, `verify_domain` activates it; HTTPS is issued automatically. DNS can take minutes to propagate, so a failed verify right after adding is normal. `list_domains` shows status.
+- `get_usage` reports the org's spend this month by line (bandwidth, compute, builds, databases, blob, workspaces). `get_analytics` reports a project's visitors and top pages, referrers and countries.
+
+## Not available
+
 - Deleting projects, databases and buckets is deliberately not available to you. Point the user to the Mojave dashboard if they ask.

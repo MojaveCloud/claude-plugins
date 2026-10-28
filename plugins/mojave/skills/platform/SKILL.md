@@ -10,7 +10,7 @@ Every deployment is one of three **kinds**. Mojave detects the kind at build tim
 | Kind | What it is | When to use it |
 | --- | --- | --- |
 | **static** | Build output served from the edge, with SPA fallback and `404.html` support | No backend |
-| **functions** | Static files plus `api/*.{js,ts,mjs}`, each served at `/api/<name>` and scaling to zero | Small stateless endpoints, webhooks, LLM calls under 30 s |
+| **functions** | Static files plus `api/*.{js,ts,mjs}`, each served at `/api/<name>` and scaling to zero | Small stateless endpoints, webhooks, LLM calls and jobs under 30 min |
 | **service** | One long-running process that owns its port. Every path is proxied to it, including websockets, SSE and streaming | SSR (`next start`), Express/Fastify/Hono, FastAPI/Django, websockets, in-process state |
 
 Prefer static or functions: they cost nothing when idle. Use a service when the app needs a process that stays alive.
@@ -27,7 +27,7 @@ export default async function handler(req) {
 
 - `body` is always a string, so parse JSON yourself. A non-string response body is JSON-stringified for you.
 - The handler is not an Express/Next.js `(req, res)` handler and not a Fetch `Request`/`Response` one, so don't write it that way.
-- Invocations are capped at **30 seconds** (504 after that). A thrown error becomes a clean JSON 500, and the stack goes to the runtime logs.
+- Invocations are capped at **30 seconds** by default (504 after that). `"maxDuration": <seconds>` in `mojave.json` raises the cap for every function in the deployment, up to 1800 (30 minutes). A thrown error becomes a clean JSON 500, and the stack goes to the runtime logs.
 - TypeScript works without setup (esbuild bundles each function).
 
 ## Services
@@ -47,7 +47,7 @@ Anything else opts in with `mojave.json` at the repo root:
 
 A service runs as a single instance. Scale it vertically with `vcpus` and `memMiB`. Idle services are stopped and restarted on the next request. Services with live connections are never stopped, and `"alwaysOn": true` keeps one running (billed continuously). The filesystem is not durable storage, so use a managed store.
 
-**Python** (service only, CPython 3.10–3.14, default 3.14):
+**Python** (service only, CPython 3.11–3.15, default 3.14):
 
 ```json
 { "kind": "service", "runtime": "python", "start": "uvicorn app:app --host 0.0.0.0 --port $PORT", "port": 8000 }
