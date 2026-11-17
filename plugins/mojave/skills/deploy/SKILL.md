@@ -1,6 +1,6 @@
 ---
 name: deploy
-description: Deploy the current GitHub repository to Mojave and iterate until it is live — push, deploy, read the build log on failure, fix, redeploy, and verify the URL. Use when the user asks to deploy, ship, host, publish or put an app online with Mojave, or to fix a failing Mojave deploy.
+description: Deploy the current GitHub repository to Mojave and iterate until the build is ready — push, deploy, read the build log on failure, fix and redeploy. Use when the user asks to deploy or build a repo on Mojave, or to fix a failing Mojave deploy.
 ---
 
 # Deploy to Mojave
@@ -49,23 +49,18 @@ Fix the cause in the repo, commit, push and deploy again. Don't loosen the build
 
 ## 5. Verify
 
-Once `status` is `ready`, fetch the `url` (`curl -sS -o /dev/null -w '%{http_code}' <url>`) and an API route if there is one.
+A new project is a **job project**: it has no `url`. Once `status` is `ready`, tell the user it is built and that they run its code across many machines with `mojave jobs run --tasks N <project> -- <command>`.
 
-The first request to a scaled-to-zero function or service can take a few seconds. A 5xx after a successful build is a runtime problem: read `get_runtime_logs` for the project.
+A project created before Mojave moved to jobs may serve a site and have a `url`. Fetch it (`curl -sS -o /dev/null -w '%{http_code}' <url>`). The first request to a scaled-to-zero function or service can take a few seconds. A 5xx after a successful build is a runtime problem: read `get_runtime_logs` for the project. Report the live URL to the user.
 
-Report the live URL to the user.
-
-## Env vars and storage
+## Env vars
 
 - `set_env_var` stores a value as a secret by default. Changes take effect on the **next** deploy, so redeploy after setting them.
-- `create_database` (Postgres → `DATABASE_URL`, Valkey → `KV_URL`) and `create_blob_bucket` (`BLOB_URL`, `BLOB_TOKEN`) inject credentials into the project's env. The app reads them from the environment, so never hard-code them. Redeploy afterwards. These resources bill while they exist, so confirm with the user before creating one.
-- `resize_database` changes a database's or KV store's vCPUs/memory or grows its volume. It **restarts** the instance (a brief outage) and volumes never shrink, so confirm with the user first. `list_backups` shows its backups.
 
-## Domains, cost and traffic
+## Cost
 
-- `add_domain` attaches a hostname and returns the DNS records the user must create at their DNS provider. Once they have, `verify_domain` activates it; HTTPS is issued automatically. DNS can take minutes to propagate, so a failed verify right after adding is normal. `list_domains` shows status.
-- `get_usage` reports the org's spend this month by line (bandwidth, compute, builds, databases, blob, workspaces). `get_analytics` reports a project's visitors and top pages, referrers and countries.
+- `get_usage` reports the org's spend this month by line (compute, builds, egress).
 
 ## Not available
 
-- Deleting projects, databases and buckets is deliberately not available to you. Point the user to the Mojave dashboard if they ask.
+- Deleting projects is deliberately not available to you. Point the user to the Mojave dashboard if they ask.

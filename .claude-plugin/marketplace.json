@@ -5,18 +5,16 @@
     "email": "brandon@mojave.sh",
     "url": "https://mojave.sh"
   },
-  "description": "Deploy GitHub repos to live URLs and run managed Postgres, Valkey and blob storage from Claude.",
+  "description": "Build and run GitHub repos on Mojave from Claude.",
   "plugins": [
     {
       "name": "mojave",
       "source": "./plugins/mojave",
-      "description": "Deploy to Mojave from Claude: ship a GitHub repo to a live URL, read build and runtime logs, manage env vars, roll back, and provision databases. Signs in through your browser; no CLI needed.",
+      "description": "Build GitHub repos as Mojave projects from Claude: deploy, read build and runtime logs, manage env vars, and roll back. New projects run as jobs. Signs in through your browser; no CLI needed.",
       "category": "deployment",
       "tags": [
         "deploy",
-        "hosting",
-        "postgres",
-        "redis",
+        "jobs",
         "mcp"
       ]
     }

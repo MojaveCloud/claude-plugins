@@ -1,9 +1,11 @@
 ---
 name: platform
-description: How apps run on Mojave — static sites, api/ serverless functions, long-running services (Node, Python, containers), mojave.json, Node/Python versions, env vars and managed storage. Use when writing, adapting or configuring an app to deploy on Mojave, writing a mojave.json, or deciding how a project should be served.
+description: How apps run on Mojave — static sites, api/ serverless functions, long-running services (Node, Python, containers), mojave.json, Node/Python versions, env vars. Use when writing, adapting or configuring an app to deploy on Mojave, writing a mojave.json, or deciding how a project should be served.
 ---
 
 # Building for Mojave
+
+A **new project is a job project** (`"kind": "job"`): Mojave builds it, serves nothing, and runs its code as jobs. Pin its runtime in `mojave.json` (`{"kind": "job", "runtime": "python"}`); `start` sets the command a job runs when it names none. Mojave no longer hosts new sites. The kinds below apply to projects that already serve one.
 
 Every deployment is one of three **kinds**. Mojave detects the kind at build time from committed files.
 
@@ -45,7 +47,7 @@ Anything else opts in with `mojave.json` at the repo root:
 
 **The service must listen on `0.0.0.0:$PORT`.** Binding `localhost`/`127.0.0.1` is the most common reason a service never becomes reachable.
 
-A service runs as a single instance. Scale it vertically with `vcpus` and `memMiB`. Idle services are stopped and restarted on the next request. Services with live connections are never stopped, and `"alwaysOn": true` keeps one running (billed continuously). The filesystem is not durable storage, so use a managed store.
+A service runs as a single instance. Scale it vertically with `vcpus` and `memMiB`. Idle services are stopped and restarted on the next request. Services with live connections are never stopped, and `"alwaysOn": true` keeps one running (billed continuously). The filesystem is not durable storage, so keep state in an external database and pass its URL as an env var.
 
 **Python** (service only, CPython 3.11–3.15, default 3.14):
 
@@ -69,10 +71,9 @@ The build runs `npm ci`/`npm install` and `npm run build` on clean Linux. pnpm a
 
 The build has no access to local files, `.env` or unpushed commits. Static output is found from the framework (Vite `dist/`, Next export `out/`, Astro, Eleventy `_site/`, …).
 
-## Env vars and storage
+## Env vars
 
 - Project env vars (`set_env_var`) are exposed to the app as process env. They are secret by default and apply from the next deploy.
-- Managed **Postgres** injects `DATABASE_URL`. Managed **Valkey** (Redis-compatible; `durable` or `cache` mode) injects `KV_URL`, which works with any Redis client. **Blob** storage injects `BLOB_URL` and `BLOB_TOKEN`.
-- Read these from the environment and never hard-code credentials. Databases are reachable only from the project's own deployments, not from the user's laptop (a Valkey store can opt into a public TLS endpoint with `mojave kv expose`).
+- Read credentials, such as an external `DATABASE_URL`, from the environment and never hard-code them.
 
 Full docs: https://mojave.sh/docs

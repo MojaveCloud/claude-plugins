@@ -1,8 +1,8 @@
 {
   "name": "mojave",
   "displayName": "Mojave",
-  "version": "0.2.2",
-  "description": "Deploy to Mojave from Claude: ship a GitHub repo to a live URL, read build and runtime logs, manage env vars, roll back, and provision databases. Signs in through your browser; no CLI needed.",
+  "version": "0.4.0",
+  "description": "Build GitHub repos as Mojave projects from Claude: deploy, read build and runtime logs, manage env vars, and roll back. New projects run as jobs. Signs in through your browser; no CLI needed.",
   "author": {
     "name": "Mojave",
     "email": "brandon@mojave.sh",
@@ -18,10 +18,7 @@
   "license": "MIT",
   "keywords": [
     "deploy",
-    "hosting",
-    "serverless",
-    "postgres",
-    "valkey",
+    "jobs",
     "mcp"
   ]
 }
