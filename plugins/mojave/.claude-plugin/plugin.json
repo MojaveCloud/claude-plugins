@@ -1,8 +1,8 @@
 {
   "name": "mojave",
   "displayName": "Mojave",
-  "version": "0.4.0",
-  "description": "Build GitHub repos as Mojave projects from Claude: deploy, read build and runtime logs, manage env vars, and roll back. New projects run as jobs. Signs in through your browser; no CLI needed.",
+  "version": "0.5.0",
+  "description": "Run jobs on Mojave from Claude: a command or function across many microVMs, each task up to 3 hours, with every task's output and result. Build GitHub repos as projects, read build logs and manage env vars. Signs in through your browser; no CLI needed.",
   "author": {
     "name": "Mojave",
     "email": "brandon@mojave.sh",

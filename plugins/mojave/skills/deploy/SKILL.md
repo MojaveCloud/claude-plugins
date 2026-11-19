@@ -49,7 +49,7 @@ Fix the cause in the repo, commit, push and deploy again. Don't loosen the build
 
 ## 5. Verify
 
-A new project is a **job project**: it has no `url`. Once `status` is `ready`, tell the user it is built and that they run its code across many machines with `mojave jobs run --tasks N <project> -- <command>`.
+A new project is a **job project**: it has no `url`. Once `status` is `ready`, it is built. Run its code with `run_job` and `project` (see the `jobs` skill), starting with one or two tasks.
 
 A project created before Mojave moved to jobs may serve a site and have a `url`. Fetch it (`curl -sS -o /dev/null -w '%{http_code}' <url>`). The first request to a scaled-to-zero function or service can take a few seconds. A 5xx after a successful build is a runtime problem: read `get_runtime_logs` for the project. Report the live URL to the user.
 
